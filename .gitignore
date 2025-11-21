@@ -1,0 +1,10 @@
+# script
+lc.py
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env

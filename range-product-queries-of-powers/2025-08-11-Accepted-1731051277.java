@@ -1,0 +1,49 @@
+/*
+ * Submission: 1731051277
+ * Problem: Range Product Queries of Powers (Medium)
+ * Status: Accepted
+ * Language: java
+ * Timestamp: 2025-08-11 09:41:46 UTC
+ * Runtime: 19 ms
+ * Memory: 105.6 MB
+ */
+
+class Solution {
+    public int[] productQueries(int n, int[][] queries) {
+        int[] ans = new int[queries.length];
+        Stack<Integer> st = new Stack<>();
+        while (n > 0) {
+            int pow = log2(n);
+            int cur = (int) Math.pow(2, pow);
+            n -= cur;
+            st.push(cur);
+        }
+        int[] range = new int[st.size()];
+        int j = 0;
+        while (!st.isEmpty()) {
+            range[j++] = st.pop();
+        }
+        // long[] prefMul = new long[range.length];
+        // long mul = 1;
+        // for (int i = 0; i < range.length; i++) {
+        //     mul *= range[i];
+        //     prefMul[i] = mul;
+        // }
+        System.out.println(Arrays.toString(range));
+        // System.out.println(Arrays.toString(prefMul));
+        int i = 0;
+        for (int[] q : queries) {
+            // ans[i++] = (int) (((prefMul[q[1]] / prefMul[q[0]]) * range[q[0]]) % (1e9 + 7));
+            long cur = 1;
+            for(int it = q[0]; it <= q[1]; it++){
+                cur = (cur*range[it]) % (long)(1e9 + 7);
+            }
+            ans[i++] = (int)cur;
+        }
+        return ans;
+    }
+
+    private int log2(int n) {
+        return 31 - Integer.numberOfLeadingZeros(n);
+    }
+}

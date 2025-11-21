@@ -1,0 +1,23 @@
+/*
+ * Submission: 1738834783
+ * Problem: Check if Grid Satisfies Conditions (Easy)
+ * Status: Accepted
+ * Language: java
+ * Timestamp: 2025-08-17 17:57:47 UTC
+ * Runtime: 1 ms
+ * Memory: 44.8 MB
+ */
+
+class Solution {
+    public boolean satisfiesConditions(int[][] grid) {
+        for (int i = 0; i < grid.length; i++)
+            for (int j = 0; j < grid[0].length; j++){
+                if (i != grid.length - 1){
+                    if (grid[i][j] != grid[i+1][j]) return false;
+                }
+                if (j != grid[0].length - 1){
+                    if (grid[i][j] == grid[i][j+1]) return false;
+                }
+            } return true;
+    }
+}

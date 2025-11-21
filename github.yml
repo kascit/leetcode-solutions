@@ -1,0 +1,114 @@
+name: Sync LeetCode Submissions
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      sync_mode:
+        description: 'Sync mode'
+        required: true
+        default: 'incremental'
+        type: choice
+        options:
+          - ac
+          - all
+          - incremental
+      dry_run:
+        description: 'Dry run (no files written)'
+        required: false
+        default: false
+        type: boolean
+  
+  # Scheduled run (daily at 2 AM UTC)
+  schedule:
+    - cron: '0 2 * * *'
+  
+  # Run on push to main (for testing)
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/sync-leetcode.yml'
+      - 'lc_sync_v2.py'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required to commit changes
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper commits
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests tqdm
+      
+      - name: Run LeetCode Sync
+        env:
+          LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
+          CSRF_TOKEN: ${{ secrets.CSRF_TOKEN }}
+          SYNC_MODE: ${{ github.event.inputs.sync_mode || 'incremental' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          VERBOSE: 'true'
+          GITHUB_ACTIONS: 'true'
+        run: |
+          python lc_sync_v2.py
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet && echo "has_changes=false" >> $GITHUB_OUTPUT || echo "has_changes=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Stage all changes
+          git add .
+          
+          # Create commit message with stats
+          ADDED=$(git diff --cached --numstat | awk '{sum+=$1} END {print sum}')
+          DELETED=$(git diff --cached --numstat | awk '{sum+=$2} END {print sum}')
+          FILES=$(git diff --cached --name-only | wc -l)
+          
+          git commit -m "🔄 Sync LeetCode submissions [$(date +'%Y-%m-%d')]" \
+                     -m "Added: ${ADDED:-0} lines | Removed: ${DELETED:-0} lines | Files: ${FILES:-0}"
+          
+          git push
+      
+      - name: Upload sync state
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-state
+          path: .leetcode_sync_state.json
+          retention-days: 90
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: ${{ github.event.inputs.sync_mode || 'incremental' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run**: ${{ github.event.inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ **Changes detected and committed**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ **No changes detected**" >> $GITHUB_STEP_SUMMARY
+          fi

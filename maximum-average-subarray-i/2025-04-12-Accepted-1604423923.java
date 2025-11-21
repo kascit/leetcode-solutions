@@ -1,0 +1,33 @@
+/*
+ * Submission: 1604423923
+ * Problem: Maximum Average Subarray I (Easy)
+ * Status: Accepted
+ * Language: java
+ * Timestamp: 2025-04-12 10:41:36 UTC
+ * Runtime: 2 ms
+ * Memory: 56.3 MB
+ */
+
+class Solution {
+    public double findMaxAverage(int[] nums,int k) {
+        int sum = 0;
+
+        
+        for (int i = 0; i < k; i++) {
+            sum += nums[i];
+        }
+
+        int maxSum = sum;
+
+        
+        for (int i = 1; i <= nums.length - k; i++) {
+            sum = sum - nums[i - 1] + nums[i + k - 1];
+
+            if (sum > maxSum) {
+                maxSum = sum;
+            }
+        }
+
+        return (double) maxSum / k;
+    }
+}
