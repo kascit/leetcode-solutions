@@ -1,0 +1,13 @@
+/*
+Submission: 1838386266
+Status: Accepted
+Timestamp: 2025-11-24 09:32:40 UTC
+Runtime: 289 ms
+Memory: 66.2 MB
+*/
+
+import pandas as pd
+
+def changeDatatype(students: pd.DataFrame) -> pd.DataFrame:
+    students['grade'] = students['grade'].astype(int)
+    return students

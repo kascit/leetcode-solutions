@@ -1,0 +1,12 @@
+/*
+Submission: 1838373399
+Status: Accepted
+Timestamp: 2025-11-24 09:13:45 UTC
+Runtime: 268 ms
+Memory: 66.3 MB
+*/
+
+import pandas as pd
+
+def selectFirstRows(employees: pd.DataFrame) -> pd.DataFrame:
+    return employees.head(3)

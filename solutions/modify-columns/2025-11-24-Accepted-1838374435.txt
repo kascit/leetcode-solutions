@@ -1,0 +1,13 @@
+/*
+Submission: 1838374435
+Status: Accepted
+Timestamp: 2025-11-24 09:15:16 UTC
+Runtime: 295 ms
+Memory: 66 MB
+*/
+
+import pandas as pd
+
+def modifySalaryColumn(employees: pd.DataFrame) -> pd.DataFrame:
+    employees['salary'] *= 2
+    return employees

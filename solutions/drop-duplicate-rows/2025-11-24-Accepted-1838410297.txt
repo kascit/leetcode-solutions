@@ -1,0 +1,12 @@
+/*
+Submission: 1838410297
+Status: Accepted
+Timestamp: 2025-11-24 10:10:12 UTC
+Runtime: 333 ms
+Memory: 66.7 MB
+*/
+
+import pandas as pd
+
+def dropDuplicateEmails(customers: pd.DataFrame) -> pd.DataFrame:
+    return customers.drop_duplicates(subset=['email'])

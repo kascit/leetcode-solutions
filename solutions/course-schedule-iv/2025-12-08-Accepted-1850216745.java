@@ -1,0 +1,30 @@
+/*
+Submission: 1850216745
+Status: Accepted
+Timestamp: 2025-12-08 14:25:03 UTC
+Runtime: 35 ms
+Memory: 51.1 MB
+*/
+
+class Solution {
+  public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
+    boolean[][] matd = new boolean[numCourses][numCourses];
+    for (int[] p : prerequisites) {
+      matd[p[0]][p[1]] = true;
+    }
+
+    for (int intem = 0; intem < numCourses; intem++) {
+      for (int i = 0; i < numCourses; i++) {
+        for (int j = 0; j < numCourses; j++) {
+          matd[i][j] |= matd[i][intem] && matd[intem][j];
+        }
+      }
+    }
+
+    List<Boolean> ans = new ArrayList<>();
+    for (int[] q : queries) {
+      ans.add(matd[q[0]][q[1]]);
+    }
+    return ans;
+  }
+}

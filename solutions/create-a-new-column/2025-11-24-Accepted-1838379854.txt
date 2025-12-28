@@ -1,0 +1,13 @@
+/*
+Submission: 1838379854
+Status: Accepted
+Timestamp: 2025-11-24 09:23:12 UTC
+Runtime: 251 ms
+Memory: 66.1 MB
+*/
+
+import pandas as pd
+
+def createBonusColumn(employees: pd.DataFrame) -> pd.DataFrame:
+    employees["bonus"] = employees["salary"] * 2
+    return employees

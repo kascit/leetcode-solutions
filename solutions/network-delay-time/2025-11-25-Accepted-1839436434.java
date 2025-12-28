@@ -1,0 +1,61 @@
+/*
+Submission: 1839436434
+Status: Accepted
+Timestamp: 2025-11-25 13:50:49 UTC
+Runtime: 13 ms
+Memory: 50.2 MB
+*/
+
+class Solution {
+    class QueueNode {
+        public int currNode;
+        public int currDistance;
+        
+        QueueNode(int currNode , int currDistance) {
+            this.currNode = currNode;
+            this.currDistance = currDistance;
+        }
+    }
+
+    public int networkDelayTime(int[][] times, int n, int k) {
+        // for (int i = (int) -1e7; i < (int) 1e8;i++);
+        Integer[][] adj = new Integer[n+1][n+1];
+
+        for (int[] t : times) {
+            int u = t[0], v = t[1], w = t[2];
+            if (adj[u][v] == null || adj[u][v] > w) adj[u][v] = w;
+        }
+
+        Integer[] shortestDistances = new Integer[n+1];
+            
+        PriorityQueue<QueueNode> q = new PriorityQueue<>((q1, q2) -> {
+            return Integer.compare(q1.currDistance, q2.currDistance);
+        });
+        
+        q.add(new QueueNode(k, 0));
+        
+        while (q.size() != 0) {
+            
+            QueueNode qNode = q.poll();
+            
+            if (shortestDistances[qNode.currNode] == null || shortestDistances[qNode.currNode] > qNode.currDistance) {
+                shortestDistances[qNode.currNode] = qNode.currDistance;
+            } else {
+                continue;
+            }
+            
+            int newNode  = qNode.currNode;
+            
+            for (int i = 1; i <= n; i++) {
+                if (newNode != i && adj[newNode][i] != null && (shortestDistances[i] == null || adj[newNode][i] + qNode.currDistance < shortestDistances[i])) {
+                    q.add(new QueueNode(i, adj[newNode][i] + qNode.currDistance));
+                }
+            }
+        }
+        int ans = 0;
+        for (int i = 1; i <= n; i++) {
+            if (shortestDistances[i] == null) return -1;
+            ans = Math.max(ans, shortestDistances[i]);
+        } return ans;
+    }
+}

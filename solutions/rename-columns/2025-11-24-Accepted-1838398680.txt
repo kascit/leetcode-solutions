@@ -1,0 +1,12 @@
+/*
+Submission: 1838398680
+Status: Accepted
+Timestamp: 2025-11-24 09:52:20 UTC
+Runtime: 307 ms
+Memory: 66.7 MB
+*/
+
+import pandas as pd
+
+def renameColumns(students: pd.DataFrame) -> pd.DataFrame:
+    return students.rename(columns={"id": "student_id","first": "first_name","last": "last_name","age": "age_in_years"})

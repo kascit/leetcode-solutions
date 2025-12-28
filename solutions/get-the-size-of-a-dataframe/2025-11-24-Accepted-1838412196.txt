@@ -1,0 +1,12 @@
+/*
+Submission: 1838412196
+Status: Accepted
+Timestamp: 2025-11-24 10:13:11 UTC
+Runtime: 319 ms
+Memory: 66.7 MB
+*/
+
+import pandas as pd
+
+def getDataframeSize(players: pd.DataFrame) -> List[int]:
+    return [players.shape[0],players.shape[1]]
